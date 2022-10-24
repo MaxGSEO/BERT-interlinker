@@ -5,7 +5,6 @@ st.set_page_config(page_title="BERT Semantic Interlinking App", page_icon="🔗"
                    layout="wide")  # needs to be the first thing after the streamlit import
 
 from io import BytesIO
-from streamlit_echarts import st_echarts
 from urllib.parse import urlparse
 import chardet
 import pandas as pd
@@ -242,86 +241,4 @@ if finish == True:
     df_xlsx = dfs_tabs(df_list, sheet_list, 'serp-cluster-output.xlsx')
     st.download_button(label='📥 Download BERT Interlinking Opportunities', data=df_xlsx, file_name='bert_interlinking_opportunities.xlsx')
 
-    # visualise result -----------------------------------------------------------------------------------------------------
-    def visualize_autocomplete(df_autocomplete_full):
-        try:
-            query = df_autocomplete_full['seed'].iloc[0]
-        except IndexError:
-            query = ""
-
-        for query in df_autocomplete_full['seed'].unique():
-            df_autocomplete_full = df_autocomplete_full[df_autocomplete_full['seed'] == query]
-            children_list = []
-            children_list_level_1 = []
-
-            for int_word in df_autocomplete_full['source_h1']:
-                q_lv1_line = {"name": int_word}
-                if not q_lv1_line in children_list_level_1:
-                    children_list_level_1.append(q_lv1_line)
-
-                children_list_level_2 = []
-
-                for query_2 in df_autocomplete_full[df_autocomplete_full['source_h1'] == int_word][
-                    'destination_url_h1']:
-                    q_lv2_line = {"name": query_2}
-                    children_list_level_2.append(q_lv2_line)
-
-                level2_tree = {'name': int_word, 'children': children_list_level_2}
-
-                if not level2_tree in children_list:
-                    children_list.append(level2_tree)
-
-                tree = {'name': query, 'children': children_list}
-
-                opts = {
-                    "backgroundColor": "#F0F2F6",
-
-
-                    "title": {
-                        # "subtext": "https://tools.alekseo.com/askey.html",
-                        # "text": f"Questions Map for: «{query}»",
-                        "x": 'center',
-                        "y": 'top',
-                        "top": "5%",
-
-                        "textStyle": {
-                            "fontSize": 22,
-
-                        },
-                        "subtextStyle": {
-                            "fontSize": 15,
-                            "color": '#2ec4b6',
-
-                        },
-                    },
-
-                    "series": [
-                        {
-                            "type": "tree",
-                            "data": [tree],
-                            "layout": "radial",
-                            "top": "10%",
-                            "left": "25%",
-                            "bottom": "5%",
-                            "right": "25%",
-                            "symbolSize": 20,
-                            "itemStyle": {
-                                "color": '#2ec4b6',
-                            },
-                            "label": {
-                                "fontSize": 14,
-
-                            },
-
-                            "expandAndCollapse": True,
-                            "animationDuration": 550,
-                            "animationDurationUpdate": 750,
-                        }
-                    ],
-                }
-            st.caption("Right mouse click to save as image.")
-            st_echarts(opts, key=query, height=1700)
-
-    st.header("Visualising First 100 Results")
-    df_autocomplete_full = df_autocomplete_full[:100]
-    visualize_autocomplete(df_autocomplete_full)
+  
