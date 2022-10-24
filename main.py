@@ -6,7 +6,6 @@ st.set_page_config(page_title="BERT Semantic Interlinking App", page_icon="🔗"
 
 from io import BytesIO
 from urllib.parse import urlparse
-import chardet
 import pandas as pd
 from sentence_transformers import SentenceTransformer, util
 
